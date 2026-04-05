@@ -10,8 +10,8 @@ app.get("/", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath(),
-      headless: true,
+      executablePath: await chromium.executablePath(), // ←これ重要
+      headless: chromium.headless, // ←これも追加
     });
 
     const page = await browser.newPage();
