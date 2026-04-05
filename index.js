@@ -9,9 +9,9 @@ app.get("/", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [...chromium.args, "--single-process"], // ←ここに追加されている
       executablePath: await chromium.executablePath(),
-      headless: true, // ←ここ戻す
+      headless: true,
     });
 
     const page = await browser.newPage();
@@ -20,11 +20,14 @@ app.get("/", async (req, res) => {
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
     );
 
+    await page.setViewport({ width: 1280, height: 800 });
+
     await page.goto("https://jp.finalfantasyxiv.com/lodestone/worldstatus/", {
       waitUntil: "domcontentloaded",
       timeout: 60000
     });
 
+    // 読み込み待ち（超重要）
     await new Promise(r => setTimeout(r, 3000));
 
     const data = await page.evaluate(() => {
